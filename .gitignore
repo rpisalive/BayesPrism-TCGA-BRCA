@@ -1,0 +1,120 @@
+# Biological datasets: local storage only.
+# Keep provenance manifests and documentation in docs/ or metadata/.
+/data/raw/
+/data/processed/
+/data/intermediate/
+/data/restricted/
+/data/private/
+/data/tcga/
+/data/TCGA/
+/raw_data/
+/processed_data/
+
+# Patient-level and restricted metadata/results.
+# Store these here regardless of file extension.
+/metadata/patient_level/
+/metadata/restricted/
+/results/patient_level/
+/results/restricted/
+
+# Large generated objects; retain small reviewed summaries elsewhere.
+/results/objects/
+/results/matrices/
+/results/intermediate/
+
+# Sequencing reads and alignment files.
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.sam
+*.cram
+*.crai
+
+# Common expression matrix and single-cell container formats.
+*.mtx
+*.mtx.gz
+*.h5
+*.hdf5
+*.h5ad
+*.h5seurat
+*.h5Seurat
+*.loom
+*.RData
+*.rdata
+
+# Reference sequences and variant datasets.
+*.fasta
+*.fasta.gz
+*.fa
+*.fa.gz
+*.fna
+*.fna.gz
+*.vcf
+*.vcf.gz
+*.bcf
+
+# R session and workspace files.
+.Rhistory
+.Rapp.history
+.RDataTmp
+.Ruserdata
+.Rproj.user/
+
+# Local renv dependencies and staging files.
+# Keep renv.lock, renv/activate.R, renv/settings.json,
+# and the project .Rprofile eligible for version control.
+/renv/library/
+/renv/staging/
+/renv/cache/
+/renv/lock/
+
+# Credentials and local environment settings.
+.env
+.env.*
+!.env.example
+!.env.template
+.Renviron
+.Renviron.*
+!.Renviron.example
+!.Renviron.template
+/credentials/
+/secrets/
+gdc-user-token*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Machine-specific configuration.
+# Shared configuration and *.example files remain trackable.
+/config/local/
+/config/*.local.*
+/config/paths.local*
+/.Rprofile.local
+
+# Operating system and editor files.
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*~
+*.swp
+*.swo
+
+# Temporary files and caches.
+tmp/
+temp/
+cache/
+.cache/
+__pycache__/
+*.pyc
+*.tmp
+*.temp
+.Rcheck/
+*_cache/
+.quarto/
+.ipynb_checkpoints/

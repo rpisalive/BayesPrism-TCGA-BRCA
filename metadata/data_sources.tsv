@@ -1,0 +1,3 @@
+dataset_id	dataset_name	data_type	source	accession_or_project	reference_or_url	release_or_version	retrieval_date	checksum_or_manifest	access_level	intended_use	notes
+tcga_brca_bulk_rnaseq	TCGA Breast Invasive Carcinoma bulk RNA-seq	bulk RNA-seq	The Cancer Genome Atlas (TCGA)	TCGA-BRCA	TBD	TBD	TBD	TBD	TBD	BayesPrism bulk mixture input	Specific source portal, expression workflow, sample inclusion criteria, and access conditions remain to be confirmed.
+breast_cancer_scrna_reference	Breast cancer single-cell RNA-seq reference	scRNA-seq	TBD	TBD	TBD	TBD	TBD	TBD	TBD	BayesPrism reference construction	Reference dataset selection, annotation version, donor coverage, and cell-type labels remain to be confirmed.

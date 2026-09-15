@@ -1,0 +1,27 @@
+# Copy this file to config/local/paths.yml and replace placeholders with
+# machine-specific locations. Do not commit config/local/paths.yml.
+
+# Directory outside the repository for large and restricted project data.
+project_data_root: "/path/to/project-data"
+
+# Immutable source files obtained from TCGA, the scRNA-seq reference, and
+# supporting annotations. Do not modify files in this directory.
+raw_data_dir: "/path/to/project-data/raw"
+
+# Derived datasets produced by documented preprocessing steps.
+processed_data_dir: "/path/to/project-data/processed"
+
+# Large temporary and stage-specific outputs that are not version controlled.
+intermediate_data_dir: "/path/to/project-data/intermediate"
+
+# Non-sensitive final outputs that are too large for Git, if any.
+final_data_dir: "/path/to/project-data/final"
+
+# Location for TCGA-BRCA bulk RNA-seq and any restricted TCGA metadata.
+tcga_data_dir: "/path/to/project-data/raw/tcga_brca"
+
+# External patient-level sTIL scoring CSV used for the existing ID intersection.
+stil_scoring_file: "/path/to/TCGA-sTIL_scoring.csv"
+
+# Location for the breast cancer scRNA-seq reference and its source files.
+scrna_reference_dir: "/path/to/project-data/raw/breast_cancer_scrna"
