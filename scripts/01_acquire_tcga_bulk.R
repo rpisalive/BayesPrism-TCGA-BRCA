@@ -72,8 +72,18 @@ main <- function() {
   results_brca <- TCGAbiolinks::getResults(query_brca)
   unique_id <- unique(as.character(results_brca$cases.submitter_id))
   if (anyNA(unique_id) || any(!nzchar(unique_id))) stop("Discovery query contains missing patient identifiers.", call. = FALSE)
-  stil <- utils::read.csv(stil_file, stringsAsFactors = FALSE)
-  if (!"ID" %in% names(stil)) stop("The sTIL scoring CSV must contain an ID column.", call. = FALSE)
+  stil <- utils::read.csv(stil_file, stringsAsFactors = FALSE,
+                          check.names = FALSE)
+  names(stil) <- sub(
+    "^\xef\xbb\xbf",
+    "",
+    names(stil),
+    useBytes = TRUE
+  )
+
+  if (!"ID" %in% names(stil)) {
+    stop("The sTIL scoring CSV must contain an ID column.", call. = FALSE)
+  }
   stil$ID <- as.character(stil$ID)
   if (anyNA(stil$ID) || any(!nzchar(stil$ID))) stop("The sTIL ID column contains missing or empty identifiers.", call. = FALSE)
   common_ids <- intersect(unique_id, stil$ID)
