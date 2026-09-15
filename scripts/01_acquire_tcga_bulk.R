@@ -53,7 +53,7 @@ main <- function() {
   log_value <- function(name, value) { line <- paste0(name, ": ", paste(value, collapse = ", ")); message(line); writeLines(line, log_file) }
   report_ids <- function(ids, filename, label) {
     utils::write.csv(data.frame(patient_id = ids), file.path(intermediate_dir, filename), row.names = FALSE)
-    log_value(paste0(label, " count"), length(ids)); if (length(ids)) log_value(label, ids)
+    log_value(paste0(label, " count"), length(ids))
   }
 
   query_parameters <- list(project = "TCGA-BRCA", data.category = "Transcriptome Profiling",
@@ -148,7 +148,9 @@ main <- function() {
   duplicated_sample_ids <- unique(sample_ids[duplicated(sample_ids)])
   utils::write.csv(data.frame(sample_id = duplicated_sample_ids), file.path(intermediate_dir, "duplicated_sample_ids.csv"), row.names = FALSE)
   log_value("Duplicated sample identifiers", length(duplicated_sample_ids))
-  if (length(duplicated_sample_ids)) { log_value("Duplicated sample IDs", duplicated_sample_ids); stop("Duplicated sample identifiers detected; no samples were discarded.", call. = FALSE) }
+  if (length(duplicated_sample_ids)) {
+    stop("Duplicated sample identifiers detected; no samples were discarded.", call. = FALSE)
+  }
   if (any(!grepl("^TCGA-[A-Za-z0-9]{2}-[A-Za-z0-9]{4}-", sample_ids))) stop("Sample identifiers are not recognizable TCGA sample barcodes.", call. = FALSE)
 
   recovered_patient_ids <- unique(substr(sample_ids, 1L, 12L))
@@ -170,13 +172,6 @@ main <- function() {
 
   log_value("Patients with multiple Primary Tumor samples",
             length(multi_sample_patients))
-  if (length(multi_sample_patients)) {
-    log_value("Multiple Primary Tumor samples per patient", paste(
-      paste0(names(multi_sample_patients), " (",
-             as.integer(multi_sample_patients), ")"),
-      collapse = "; "
-    ))
-  }
 
   missing_recovered_ids <- setdiff(download_ids, recovered_patient_ids)
   report_ids(missing_recovered_ids, "requested_ids_not_recovered.csv", "Requested patient IDs not recovered")
