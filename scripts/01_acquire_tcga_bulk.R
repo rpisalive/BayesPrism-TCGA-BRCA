@@ -111,7 +111,21 @@ main <- function() {
 
   # Use the explicit external GDC download directory for preparation.
   # Source files are not removed by this call because save = FALSE.
-  TCGAbiolinks::GDCdownload(query_brca_stil, method = "api", files.per.chunk = 20, directory = paths$tcga_data_dir)
+  # Keep any TCGAbiolinks-generated manifest with this run's external
+  # intermediate artifacts, then restore the caller's working directory.
+  original_working_directory <- getwd()
+  tryCatch(
+    {
+      setwd(intermediate_dir)
+      TCGAbiolinks::GDCdownload(
+        query_brca_stil,
+        method = "api",
+        files.per.chunk = 20,
+        directory = paths$tcga_data_dir
+      )
+    },
+    finally = setwd(original_working_directory)
+  )
   brca_stil_se <- TCGAbiolinks::GDCprepare(
     query_brca_stil,
     directory = paths$tcga_data_dir,

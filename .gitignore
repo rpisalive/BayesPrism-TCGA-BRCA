@@ -118,3 +118,6 @@ __pycache__/
 *_cache/
 .quarto/
 .ipynb_checkpoints/
+
+# TCGAbiolinks may create this manifest in the current working directory.
+/MANIFEST.txt
