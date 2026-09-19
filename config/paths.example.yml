@@ -20,6 +20,9 @@ final_data_dir: "/path/to/project-data/final"
 # Location for TCGA-BRCA bulk RNA-seq and any restricted TCGA metadata.
 tcga_data_dir: "/path/to/project-data/raw/tcga_brca"
 
+# Acquisition run used as input for TCGA bulk QC and preprocessing.
+tcga_acquisition_run_id: "<acquisition-run-id>"
+
 # External patient-level sTIL scoring CSV used for the existing ID intersection.
 stil_scoring_file: "/path/to/TCGA-sTIL_scoring.csv"
 
