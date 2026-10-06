@@ -1,0 +1,2 @@
+stage	run_id	run_date	script	input_run_id	status	git_commit	notes
+01	20260915T222828_15620	2026-09-15	scripts/01_acquire_tcga_bulk.R	NA	succeeded	UNVERIFIED	Successful TCGA-BRCA sTIL-matched Primary Tumor acquisition; execution Git commit was not recorded.
