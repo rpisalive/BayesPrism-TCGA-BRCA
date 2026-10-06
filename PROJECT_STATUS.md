@@ -8,13 +8,13 @@ Use BayesPrism to deconvolve TCGA-BRCA bulk RNA-seq with a breast cancer scRNA-s
 
 ## 2. Current handoff state
 
-Repository and reproducibility infrastructure are established. TCGA-BRCA acquisition is implemented and documented as successfully executed.
+Repository and reproducibility infrastructure are established. Stage 01 TCGA-BRCA acquisition and stage 02 TCGA bulk QC/structural validation are implemented and successfully executed.
 
-BayesPrism input requirements have been reviewed, the acquisition object has been structurally inspected, and the methodological specification for script 02 has been agreed in the project discussion. These review and specification details are not yet encoded in committed repository documents.
+`scripts/02_preprocess_tcga_bulk.R` has been reviewed, committed, pushed, and executed successfully. Production QC run `20261006T151501_23332` used acquisition run `20260915T222828_15620` and execution commit `ff27402350973c49a4e735c8a3f18a23082e68e3`. The committed run registry records this execution.
 
-`scripts/02_preprocess_tcga_bulk.R` does not exist. The scRNA-seq reference remains unselected, and BayesPrism has not been installed or version-pinned. No deconvolution or downstream analysis has been executed.
+Stages 03–10 remain unimplemented. The breast cancer scRNA-seq reference remains unselected. BayesPrism remains uninstalled and unpinned for this project, and no deconvolution or downstream analysis has been performed.
 
-The README retains an earlier setup status and provisional directory layout. The workflow document also predates the script-02 specification. Use the detailed records identified below for implemented work, with the separately labelled discussion-confirmed information in this handoff for subsequent planning.
+The README retains earlier setup information, and `docs/workflow.md` still describes stage 02 as planned. These detailed records should be synchronized with the completed stage-02 state. This handoff summarizes current implementation and execution evidence without replacing the authoritative records listed below.
 
 ## 3. Repository state
 
@@ -22,12 +22,12 @@ The README retains an earlier setup status and provisional directory layout. The
 | --- | --- |
 | Repository | BayesPrism-TCGA-BRCA |
 | Current branch | `main` |
-| HEAD | `b582508ea3c34e6d227054bc985f2008c2f092c2` |
-| HEAD message | Add explicit TCGA acquisition run selector |
-| Local `main` versus `origin/main` | Synchronized with the locally recorded remote-tracking reference; 0 ahead, 0 behind |
+| HEAD | `525e4c17ef15adbd2e59b8a6a79d5458571f73dc` |
+| HEAD message | Register successful TCGA bulk QC run |
+| Local `main` versus `origin/main` | Synchronized; 0 ahead, 0 behind |
 | Working tree | Clean |
 
-No fetch was performed for this handoff review; remote synchronization describes the current local Git references.
+Synchronization was verified against the locally recorded `origin/main` reference. No fresh fetch was performed during this handoff review.
 
 Repository conventions:
 
@@ -42,7 +42,9 @@ Repository conventions:
 ### 4.1 Stage 01 — TCGA-BRCA acquisition
 
 **Script:** `scripts/01_acquire_tcga_bulk.R`  
-**Status:** Implemented; successful execution on 2026-09-15 is documented in the workflow and analytical-decision records.
+**Status:** Implemented and successfully executed on 2026-09-15.  
+**Acquisition run:** `20260915T222828_15620`  
+**Execution Git commit:** `UNVERIFIED`; the exact execution commit was not recorded.
 
 Acquisition uses NCI Genomic Data Commons / TCGA data with:
 
@@ -59,7 +61,7 @@ The discovery query includes Primary Tumor and Solid Tissue Normal samples. Uniq
 
 This sTIL-based cohort restriction is provisional pending collaborator confirmation. No normalization, transformation, or gene filtering occurs during acquisition.
 
-The following successful-run counts are recorded in `docs/analytical_decisions.md`:
+The successful acquisition counts recorded in [docs/analytical_decisions.md](docs/analytical_decisions.md) are:
 
 | Quantity | Count |
 | --- | ---: |
@@ -71,7 +73,7 @@ The following successful-run counts are recorded in `docs/analytical_decisions.m
 | Genes | 60,660 |
 | Patients with multiple Primary Tumor samples | 11 |
 
-The successful run ID, `20260915T222828_15620`, is confirmed in the project discussion but is not recorded in the inspected committed documentation. Prior run inspection reported 0 requested patients not recovered and 0 duplicated sample identifiers; these results are also not yet recorded in committed documentation.
+These counts describe the current provisional cohort, not necessarily the final publication cohort. The prior acquisition review reported no requested patients missing; that acquisition-specific result was not independently rechecked during this handoff review.
 
 External output categories are:
 
@@ -79,68 +81,112 @@ External output categories are:
 - **Processed:** Derived raw-count CSV, sample metadata CSV, and acquisition `SummarizedExperiment`, organized by acquisition run.
 - **Intermediate:** Run-specific queries, manifests, identifier-specific diagnostic reports, provenance, session information, and acquisition log.
 
-The current script writes aggregate-only acquisition log entries and retains identifier-specific CSV reports externally. These logging safeguards were added after the successful run; they do not retrospectively sanitize its original log.
+The current acquisition script writes aggregate-only log entries and retains identifier-specific CSV reports externally. These logging safeguards were added after the successful acquisition; they do not retrospectively sanitize its original log.
 
-## 5. Current TCGA expression-object state
+### 4.2 Stage 02 — TCGA bulk QC and structural validation
 
-### Recorded in committed repository documentation
+**Script:** `scripts/02_preprocess_tcga_bulk.R`  
+**Status:** Implemented and successfully executed.  
+**Production QC run:** `20261006T151501_23332`  
+**Input acquisition run:** `20260915T222828_15620`  
+**Execution Git commit:** `ff27402350973c49a4e735c8a3f18a23082e68e3`
 
-The successful acquisition retained the `unstranded` raw-count assay with 60,660 genes, 869 Primary Tumor samples, and 853 patients. Eleven patients have multiple samples. No samples were selected or collapsed during acquisition.
+The script:
 
-### Confirmed during pre-script-02 inspection; not yet encoded in a committed repository artifact
+- Selects the acquisition input explicitly through `tcga_acquisition_run_id`.
+- Uses only the native `unstranded` assay in gene-by-sample orientation.
+- Validates object structure, metadata alignment, identifiers, and raw counts.
+- Calculates sample and gene QC.
+- Reports multiple samples per patient without selecting or collapsing samples.
+- Records input/script checksums, software versions, UTC timestamps, and Git provenance.
+- Writes aggregate-only logs and external identifier-specific QC tables.
 
-The prior structural inspection established:
+No expression normalization, transformation, filtering, transposition, identifier conversion, or expression-data rewriting occurs.
+
+All stage-02 outputs remain external to Git under the configured intermediate root:
+
+```text
+tcga_brca/20260915T222828_15620/02_preprocess/20261006T151501_23332/
+```
+
+## 5. Current TCGA expression/QC state
+
+### Production-validated structure and diagnostics
+
+The finalized stage-02 summary and QC tables support the following observations:
 
 | Property | Observed state |
 | --- | --- |
 | Object class | `RangedSummarizedExperiment` |
-| Dimensions | 60,660 genes × 869 samples |
-| Assay for subsequent bulk QC | `unstranded` |
-| Values | Raw integer counts |
+| Assay | `unstranded` |
 | Orientation | Gene by sample |
-| Missing counts | 0 |
-| Non-finite counts | 0 |
-| Negative counts | 0 |
-| Zero-total samples | 0 |
-| All-zero genes | 2,671 |
-| Required gene annotations | `gene_id`, `gene_name`, `gene_type` available |
-| `gene_id` | Unique; most values retain Ensembl version suffixes |
-| `gene_name` | Not unique |
+| Genes | 60,660 |
+| Samples | 869 |
 | Unique patients | 853 |
-| Patients with multiple samples | 11 |
 | Sample types | All 869 samples are Primary Tumor |
+| Raw-count validation | Numeric, integer-like, non-missing, finite, non-negative |
+| Zero-total samples | 0 |
+| Missing sample IDs | 0 |
+| Duplicated sample-ID rows | 0 |
+| Missing patient IDs | 0 |
+| Patients with multiple samples | 11 |
+| Maximum samples per patient | 3 |
+| All-zero genes | 2,671 |
+| Missing `gene_id` | 0 |
+| Duplicated `gene_id` rows | 0 |
+| Missing `gene_name` | 0 |
+| Duplicated `gene_name` rows | 1,343 |
+| Distinct duplicated `gene_name` values | 110 |
+| Missing `gene_type` | 0 |
+| Ensembl numeric-version-suffix count | 60,616 |
+| Numeric-version-suffix proportion | Approximately 0.999275 |
 
-These observations were not rechecked against external data during this handoff review. No patient-level data were inspected.
+The earlier exploratory inspection counted **1,233 duplicate gene-name occurrences beyond the first instance**. Production QC flags **all 1,343 rows participating in duplicated names**, spanning **110 distinct names**. These definitions are consistent: `1,343 − 110 = 1,233`.
+
+The suffix diagnostic detects a terminal dot followed by digits; it does not strip suffixes or independently validate the Ensembl namespace.
+
+All 60,660 genes have recorded `gene_type` values. The external gene QC table retains the original annotations and supports the full distribution; the YAML summary groups unrecognized annotation labels into a controlled aggregate category.
+
+### Production QC summaries
+
+| Measure | Minimum | Median | Mean | Maximum |
+| --- | ---: | ---: | ---: | ---: |
+| Library size | 19,225,117 | 57,196,716 | 57,564,906.217 | 114,015,705 |
+| Detected genes per sample | 24,722 | 32,667 | 32,746.244 | 54,681 |
+| Detected-gene proportion | 0.407550280 | 0.538526212 | 0.539832574 | 0.901434224 |
+| Non-zero samples per gene | 0 | 491 | 469.115 | 869 |
+
+All-zero genes, duplicate gene names, and multiple samples remain present. No automatic exclusions or analytical thresholds were introduced.
 
 ## 6. Confirmed methodological decisions
 
-Acquisition decisions are recorded in `docs/analytical_decisions.md`. The following additional scope decisions were established in the pre-script-02 discussion and are recorded here for handoff.
+Acquisition decisions are recorded in [docs/analytical_decisions.md](docs/analytical_decisions.md). The implemented stage-02 scope also reflects the agreed project specification.
 
-**Project decisions:**
+**Confirmed project decisions:**
 
 - Preserve raw `unstranded` counts.
 - Do not normalize or log-transform counts before BayesPrism.
-- Script 02 performs QC and structural validation only.
-- Script 02 must not remove genes or samples, strip Ensembl version suffixes, resolve duplicate gene symbols, or transpose the matrix.
-- Script 05 owns gene-identifier harmonization.
-- Script 06 owns BayesPrism-specific input preparation.
-- Select the acquisition input explicitly using `tcga_acquisition_run_id`; do not automatically select the latest run.
-- Do not create another complete expression matrix or `SummarizedExperiment` merely for script-02 QC.
+- Stage 02 performs QC and structural validation only.
+- Stage 02 does not remove genes or samples, strip Ensembl suffixes, resolve duplicate symbols, or transpose the matrix.
+- Stage 05 owns gene-identifier harmonization.
+- Stage 06 owns BayesPrism-specific input preparation.
+- Select acquisition inputs explicitly using `tcga_acquisition_run_id`; do not automatically select the latest run.
+- Do not create another complete expression matrix or `SummarizedExperiment` merely for stage-02 QC.
 
-The explicit selector is present as a documented placeholder in `config/paths.example.yml`. Its actual value belongs in ignored local configuration.
+The selector is a documented placeholder in `config/paths.example.yml`; its actual value belongs in ignored local configuration.
 
-**BayesPrism input expectations from the prior methodological review:**
+**BayesPrism expectations from the prior methodological review:**
 
-Raw unnormalized counts are the intended input, and the eventual bulk mixture matrix uses sample-by-gene orientation. The transpose therefore belongs to input preparation, not script 02. Multiple samples from one patient are not inherently a BayesPrism technical input violation.
+Raw unnormalized counts are the intended input, and the eventual bulk mixture uses sample-by-gene orientation. Transposition therefore belongs to input preparation. Multiple samples from one patient are not inherently a BayesPrism technical input violation.
 
-These software-specific conclusions are not yet backed by a committed requirements-review artifact. Their version-specific documentation and code references should be retained when BayesPrism is pinned and input preparation is implemented.
+The prior version-specific requirements review remains discussion-confirmed rather than a committed requirements-review artifact. Its official documentation and code references should be retained and checked when BayesPrism is pinned and input preparation is implemented.
 
 ## 7. Planned script sequence
 
 | Stage | Description | Current status |
 | --- | --- | --- |
 | 01 | TCGA-BRCA acquisition | Implemented and successfully executed |
-| 02 | TCGA bulk QC/preprocessing | Specified in project discussion; script not created |
+| 02 | TCGA bulk QC and structural validation | Implemented and successfully executed |
 | 03 | Breast cancer scRNA-seq reference acquisition | Planned; reference not selected |
 | 04 | scRNA-seq reference preprocessing | Planned; QC, annotation, and filtering pending |
 | 05 | Gene identifier harmonization | Planned; identifier and duplicate handling pending |
@@ -150,25 +196,32 @@ These software-specific conclusions are not yet backed by a committed requiremen
 | 09 | Downstream analyses | Planned |
 | 10 | Figures and summary tables | Planned |
 
-The stage numbering follows `docs/workflow.md`. No empty analysis scripts should be pre-created.
+Stages 03–10 remain unimplemented. Stage numbering follows [docs/workflow.md](docs/workflow.md), whose stage-02 status needs updating. No empty analysis scripts should be pre-created.
 
-## 8. Script 02 design status
+## 8. Stage-02 implementation and execution status
 
-The methodological specification for `scripts/02_preprocess_tcga_bulk.R` has been agreed in the project discussion. The script has not yet been created or executed.
+The reviewed script is committed and pushed. Its first production execution completed with observed process exit code **0** and finalized `qc_status: succeeded`.
 
-Its responsibilities are:
+### Execution provenance
 
-- Load an explicitly selected acquisition object from external processed storage.
-- Use only the `unstranded` assay in gene-by-sample orientation.
-- Validate object structure, metadata alignment, identifiers, and raw-count values.
-- Calculate sample QC: library size, detected genes and proportion, zero-total status, identifier diagnostics, sample-type distribution, and samples per patient.
-- Calculate gene QC: total counts, expression prevalence, all-zero status, gene-type distribution, annotation completeness, duplicate diagnostics, and Ensembl version-suffix diagnostics.
-- Report multiple samples per patient without selecting or collapsing them.
-- Preserve identifier-specific diagnostics externally and log aggregate information only.
-- Record input and script checksums, versions, timestamps, and validation status.
-- Perform no expression-data transformation.
+| Field | Recorded value |
+| --- | --- |
+| QC run ID | `20261006T151501_23332` |
+| Acquisition run ID | `20260915T222828_15620` |
+| Execution Git commit | `ff27402350973c49a4e735c8a3f18a23082e68e3` |
+| Git tree at execution | `clean` |
+| Checksum algorithm | MD5 |
+| Input RDS MD5 | `8cb414f572e34a0a70b65fe938360244` |
+| Script MD5 | `dd8be6061b20c9889bc316a322edfb95` |
+| UTC start | `2026-10-06T15:14:56Z` |
+| UTC completion | `2026-10-06T15:15:14Z` |
+| R | 4.4.3 |
+| SummarizedExperiment | 1.34.0 |
+| yaml | 2.3.12 |
 
-Intended external artifacts:
+The committed [metadata/run_registry.tsv](metadata/run_registry.tsv) records this successful execution and its exact Git commit.
+
+### Finalized external artifacts
 
 ```text
 sample_qc.tsv
@@ -179,37 +232,43 @@ session_info.txt
 preprocess_tcga_bulk.log
 ```
 
-Planned output hierarchy:
+All six files exist and are non-empty. The finalized summary records all required outputs as completed, and no `.tmp` files remain. QC tables contain 869 sample rows, 60,660 gene rows, and 11 multiple-sample report rows.
 
-```text
-intermediate/tcga_brca/<acquisition_run_id>/02_preprocess/<qc_run_id>/
-```
+TSVs use UTF-8, quoted character fields, and `<QC_MISSING>` as the missing-value sentinel. Literal `"NA"` is preserved as a character value.
 
-These outputs do not yet exist as script-02 products.
+The log records passing validation and points to `qc_summary.yml` as the final completion marker. Identifier-specific QC remains external. No expression matrix or RDS was exported.
 
-Structural failures must stop execution. Expected findings such as all-zero genes, duplicate gene symbols, and multiple samples per patient must be reported without automatic exclusion. Available diagnostic evidence should be retained if a run fails.
+### Warnings and execution context
+
+The production execution had **0 script QC warnings** and **0 output/finalization warnings**.
+
+Startup diagnostics included `C.UTF-8` locale-setting warnings and a renv diagnostic that `BiocManager` loaded before activation. These were observed during the production execution review and summarized in the run registry; startup diagnostics are not included in the script's QC warning count.
+
+These diagnostics did not prevent successful execution or output finalization.
 
 ## 9. Unresolved scientific and analytical decisions
 
-### Cohort
+### Cohort — provisional
 
 The sTIL-based restriction awaits collaborator confirmation. The scoring dataset’s original provenance, publication, access conditions, and eligibility criteria remain unverified.
 
-### Multiple Primary Tumor samples
+### Multiple Primary Tumor samples — unresolved
 
-Eleven patients have multiple Primary Tumor samples. This is not inherently a BayesPrism technical input violation, but handling remains unresolved for analyses requiring independent patient-level observations. Do not silently select, remove, or aggregate samples.
+Production QC confirms that 11 patients have multiple samples: 6 patients have two samples and 5 have three, with a maximum of three.
 
-### scRNA-seq reference
+No samples were selected, removed, or aggregated. Handling remains unresolved for downstream analyses requiring independent patient-level observations and must be documented before those analyses.
 
-The reference dataset is not selected. Reference QC, cell-type and cell-state annotation, malignant-cell representation, donor coverage, and filtering remain undecided.
+### scRNA-seq reference — pending
 
-### Gene harmonization
+The reference dataset remains unselected. Reference-selection criteria, QC, cell-type and cell-state annotation, malignant-cell representation, donor coverage, and filtering remain undecided.
+
+### Gene harmonization — pending
 
 Ensembl version-suffix handling and duplicate-symbol resolution remain undecided. The final canonical identifier strategy depends on the selected reference.
 
-### BayesPrism
+### BayesPrism — pending
 
-BayesPrism is not installed or version-pinned. Final cleanup, filtering, and model parameters remain undecided. Protein-coding-only filtering has not been adopted as a project rule.
+BayesPrism is not installed or version-pinned for this project. Final cleanup, filtering, and model parameters remain undecided. Protein-coding-only filtering has not been adopted as a project rule.
 
 ## 10. Computational environment
 
@@ -223,10 +282,10 @@ BayesPrism is not installed or version-pinned. Final cleanup, filtering, and mod
 | SummarizedExperiment | 1.34.0 |
 | yaml | 2.3.12 |
 | Dependency record | Committed `renv.lock` |
-| Last recorded renv status | “No issues found -- the project is in a consistent state.” |
-| BayesPrism | Not installed or version-pinned |
+| Last documented renv status check | “No issues found -- the project is in a consistent state.” |
+| BayesPrism | Not installed or version-pinned for this project |
 
-`renv` was initialized after acquisition; its committed lockfile records the current project dependency environment.
+`renv` was initialized after acquisition. Its committed lockfile records the project dependency environment. Stage-02 provenance confirms R and the directly used SummarizedExperiment/yaml versions; the last documented renv consistency check is not a fresh status assessment.
 
 Normal renv sandbox activation hangs in the local Windows environment. An ignored, machine-specific `.Renviron` uses:
 
@@ -236,46 +295,50 @@ RENV_CONFIG_SANDBOX_ENABLED=FALSE
 
 This workaround is not committed and is not a cross-platform requirement. Other environments should use the default sandbox unless independently shown to require the workaround.
 
-HPC software versions, system libraries, scheduler settings, and resource requirements remain unconfirmed. No fresh R environment test was performed for this handoff.
+HPC software versions, system libraries, scheduler settings, and resource requirements remain unconfirmed. Consult [docs/environment.md](docs/environment.md) for detailed environment records.
 
 ## 11. Data and provenance records
 
 | Record | Authoritative role |
 | --- | --- |
-| `AGENTS.md` | Repository-wide scientific integrity, data protection, coding, and Git rules |
-| `metadata/data_sources.tsv` | Dataset provenance, confirmed releases and retrieval dates, intended uses, and unresolved source details |
-| `docs/analytical_decisions.md` | Confirmed, provisional, and pending analytical decisions and documented acquisition counts |
-| `docs/workflow.md` | Implemented workflow, stage ordering, input/output categories, and data-location conventions |
-| `docs/environment.md` | Confirmed execution environment and local versus HPC considerations |
-| `renv.lock` | Machine-readable dependency versions and sources |
-| `config/paths.example.yml` | Safe configuration schema, including the explicit acquisition-run selector |
-| `scripts/01_acquire_tcga_bulk.R` | Exact implemented acquisition behavior |
-| `README.md` | Scientific overview; its status and structure sections currently retain earlier planning information |
+| [AGENTS.md](AGENTS.md) | Scientific integrity, data protection, coding, and Git rules |
+| [metadata/data_sources.tsv](metadata/data_sources.tsv) | Dataset provenance, releases, retrieval dates, intended uses, and unresolved source details |
+| [metadata/run_registry.tsv](metadata/run_registry.tsv) | Compact registry of actual execution attempts, input runs, statuses, and execution Git commits |
+| [docs/analytical_decisions.md](docs/analytical_decisions.md) | Confirmed, provisional, and pending analytical decisions and acquisition counts |
+| [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions; stage-02 documentation needs synchronization |
+| [docs/environment.md](docs/environment.md) | Computational environment and local versus HPC considerations |
+| [renv.lock](renv.lock) | Machine-readable dependency versions and sources |
+| [config/paths.example.yml](config/paths.example.yml) | Safe configuration schema and explicit acquisition-run selector |
+| [scripts/01_acquire_tcga_bulk.R](scripts/01_acquire_tcga_bulk.R) | Implemented acquisition behavior |
+| [scripts/02_preprocess_tcga_bulk.R](scripts/02_preprocess_tcga_bulk.R) | Implemented bulk QC, validation, output handling, and provenance behavior |
+| [README.md](README.md) | Scientific overview; earlier setup/status information needs synchronization |
 
-The provenance record identifies TCGA input as **GDC Data Release 46.0**, retrieved on **2026-09-15**. sTIL source details and the scRNA-seq reference remain unresolved.
+The dataset provenance record identifies TCGA input as **GDC Data Release 46.0**, retrieved on **2026-09-15**. sTIL source details and the scRNA-seq reference remain unresolved.
 
-External run provenance, logs, manifests, and QC reports provide execution-specific evidence and may contain identifiers. They must remain outside Git.
+The run registry records stage 01 with `git_commit = UNVERIFIED` and stage 02 with its exact execution commit. Future actual attempts should be registered after their outcomes are inspected, including failed, interrupted, and incomplete runs. Planned work does not receive execution rows.
 
-`PROJECT_STATUS.md` is a handoff snapshot, not a replacement for these detailed records. When records conflict, inspect the implementation and relevant execution evidence, document the discrepancy, and update the appropriate record explicitly.
+External provenance, logs, manifests, and QC reports provide detailed execution evidence and may contain identifiers or private paths. They must remain outside Git.
+
+`PROJECT_STATUS.md` is a handoff snapshot, not a replacement for these records. When records conflict, inspect the implementation and execution evidence and update the appropriate detailed record explicitly.
 
 ## 12. Immediate next action
 
-Create and review `scripts/02_preprocess_tcga_bulk.R` according to the agreed QC and validation specification.
+Synchronize the detailed workflow and related documentation with the completed stage-02 state where needed.
 
-Review the script and perform a syntax-only parse before executing it against the selected acquisition dataset.
+Then begin reference selection after reviewing the existing project records and defining the reference-selection criteria. No breast cancer scRNA-seq reference has yet been chosen, and stage-03 implementation details remain pending.
 
 ## 13. Handoff rules
 
 - Read `PROJECT_STATUS.md` first, then consult the authoritative detailed records.
-- Use repository records for decisions already documented; do not reconstruct them from chat history.
-- Preserve the distinction between repository-backed facts and discussion-confirmed observations awaiting a committed artifact.
+- Preserve the distinction between repository-backed facts, external execution evidence, discussion-confirmed observations, provisional decisions, and planned work.
 - Do not commit patient-level data or large expression matrices.
 - Do not modify raw data.
 - Do not silently filter or exclude samples or genes.
 - Distinguish planned, implemented, and successfully executed work.
 - Inspect logs, expected outputs, and QC before declaring success.
-- Update this handoff when the project state materially changes; Git history remains the historical record.
+- Record actual execution outcomes, including failures, in the run registry.
+- Update this handoff when project state materially changes; Git history remains the historical record.
 
 ---
 
-Verification note: The inspected committed files do not record the successful run ID, zero missing requested patients, zero duplicate sample identifiers, detailed expression-object inspection results, BayesPrism requirements review, or agreed script-02 specification. These were labelled as confirmed in prior project discussion rather than repository-backed findings. Local branch references are synchronized, but no fresh fetch or external-data inspection was performed.
+Verification note: Repository branch, HEAD, message, clean working tree, and synchronization with the local remote-tracking reference were verified during the handoff review. Finalized stage-02 external outputs independently support the production QC findings, aggregate summaries, provenance, and output finalization. The stage-01 execution Git commit remains `UNVERIFIED`, and the earlier acquisition-specific claim of zero requested patients missing was not independently rechecked. The BayesPrism requirements review remains discussion-confirmed rather than a committed requirements-review artifact. Production exit code 0 and detailed startup diagnostics were observed during the earlier execution review, not stored as dedicated fields in the finalized QC summary. BayesPrism’s uninstalled/unpinned state reflects documented project state; no fresh installation scan was performed. No fresh fetch, new analysis execution, or acquisition-input reload was performed during the handoff review. Only `PROJECT_STATUS.md` was modified when applying this revision.
