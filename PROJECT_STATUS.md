@@ -14,7 +14,7 @@ Repository and reproducibility infrastructure are established. Stage 01 TCGA-BRC
 
 Stages 03–10 remain unimplemented. The breast cancer scRNA-seq reference remains unselected. BayesPrism remains uninstalled and unpinned for this project, and no deconvolution or downstream analysis has been performed.
 
-The README retains earlier setup information, and `docs/workflow.md` still describes stage 02 as planned. These detailed records should be synchronized with the completed stage-02 state. This handoff summarizes current implementation and execution evidence without replacing the authoritative records listed below.
+The repository overview and workflow documentation are synchronized with the completed stage-02 state. This handoff summarizes current implementation and execution evidence without replacing the authoritative records listed below.
 
 ## 3. Repository state
 
@@ -22,8 +22,8 @@ The README retains earlier setup information, and `docs/workflow.md` still descr
 | --- | --- |
 | Repository | BayesPrism-TCGA-BRCA |
 | Current branch | `main` |
-| HEAD | `525e4c17ef15adbd2e59b8a6a79d5458571f73dc` |
-| HEAD message | Register successful TCGA bulk QC run |
+| HEAD | `cf0bd9dd7dc2775f8e22aef350825ab1f3cbc9ee` |
+| HEAD message | Update README for completed TCGA QC stages |
 | Local `main` versus `origin/main` | Synchronized; 0 ahead, 0 behind |
 | Working tree | Clean |
 
@@ -196,7 +196,7 @@ The prior version-specific requirements review remains discussion-confirmed rath
 | 09 | Downstream analyses | Planned |
 | 10 | Figures and summary tables | Planned |
 
-Stages 03–10 remain unimplemented. Stage numbering follows [docs/workflow.md](docs/workflow.md), whose stage-02 status needs updating. No empty analysis scripts should be pre-created.
+Stages 03–10 remain unimplemented. Stage numbering follows [docs/workflow.md](docs/workflow.md). No empty analysis scripts should be pre-created.
 
 ## 8. Stage-02 implementation and execution status
 
@@ -305,13 +305,13 @@ HPC software versions, system libraries, scheduler settings, and resource requir
 | [metadata/data_sources.tsv](metadata/data_sources.tsv) | Dataset provenance, releases, retrieval dates, intended uses, and unresolved source details |
 | [metadata/run_registry.tsv](metadata/run_registry.tsv) | Compact registry of actual execution attempts, input runs, statuses, and execution Git commits |
 | [docs/analytical_decisions.md](docs/analytical_decisions.md) | Confirmed, provisional, and pending analytical decisions and acquisition counts |
-| [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions; stage-02 documentation needs synchronization |
+| [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions |
 | [docs/environment.md](docs/environment.md) | Computational environment and local versus HPC considerations |
 | [renv.lock](renv.lock) | Machine-readable dependency versions and sources |
 | [config/paths.example.yml](config/paths.example.yml) | Safe configuration schema and explicit acquisition-run selector |
 | [scripts/01_acquire_tcga_bulk.R](scripts/01_acquire_tcga_bulk.R) | Implemented acquisition behavior |
 | [scripts/02_preprocess_tcga_bulk.R](scripts/02_preprocess_tcga_bulk.R) | Implemented bulk QC, validation, output handling, and provenance behavior |
-| [README.md](README.md) | Scientific overview; earlier setup/status information needs synchronization |
+| [README.md](README.md) | Concise public-facing scientific overview of the repository |
 
 The dataset provenance record identifies TCGA input as **GDC Data Release 46.0**, retrieved on **2026-09-15**. sTIL source details and the scRNA-seq reference remain unresolved.
 
@@ -323,9 +323,9 @@ External provenance, logs, manifests, and QC reports provide detailed execution 
 
 ## 12. Immediate next action
 
-Synchronize the detailed workflow and related documentation with the completed stage-02 state where needed.
+Define and document the breast cancer scRNA-seq reference-selection criteria before selecting a dataset or creating stage-03 implementation code.
 
-Then begin reference selection after reviewing the existing project records and defining the reference-selection criteria. No breast cancer scRNA-seq reference has yet been chosen, and stage-03 implementation details remain pending.
+No breast cancer scRNA-seq reference has yet been selected. Establish the selection criteria before choosing a dataset, and do not create a stage-03 script yet.
 
 ## 13. Handoff rules
 
