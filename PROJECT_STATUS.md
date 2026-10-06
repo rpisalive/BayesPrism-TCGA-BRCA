@@ -260,7 +260,7 @@ No samples were selected, removed, or aggregated. Handling remains unresolved fo
 
 ### scRNA-seq reference — pending
 
-The reference dataset remains unselected. Reference-selection criteria, QC, cell-type and cell-state annotation, malignant-cell representation, donor coverage, and filtering remain undecided.
+The reference dataset remains unselected. Approved reference-selection criteria are recorded in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md). Candidate assessment, Stage-04 QC and annotation, donor coverage, and filtering decisions remain pending.
 
 ### Gene harmonization — pending
 
@@ -305,6 +305,7 @@ HPC software versions, system libraries, scheduler settings, and resource requir
 | [metadata/data_sources.tsv](metadata/data_sources.tsv) | Dataset provenance, releases, retrieval dates, intended uses, and unresolved source details |
 | [metadata/run_registry.tsv](metadata/run_registry.tsv) | Compact registry of actual execution attempts, input runs, statuses, and execution Git commits |
 | [docs/analytical_decisions.md](docs/analytical_decisions.md) | Confirmed, provisional, and pending analytical decisions and acquisition counts |
+| [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) | Approved reference-selection criteria and future candidate assessment framework |
 | [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions |
 | [docs/environment.md](docs/environment.md) | Computational environment and local versus HPC considerations |
 | [renv.lock](renv.lock) | Machine-readable dependency versions and sources |
@@ -323,9 +324,9 @@ External provenance, logs, manifests, and QC reports provide detailed execution 
 
 ## 12. Immediate next action
 
-Define and document the breast cancer scRNA-seq reference-selection criteria before selecting a dataset or creating stage-03 implementation code.
+Use the approved criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) to assess candidate breast cancer scRNA-seq references before selecting a dataset or creating stage-03 implementation code.
 
-No breast cancer scRNA-seq reference has yet been selected. Establish the selection criteria before choosing a dataset, and do not create a stage-03 script yet.
+No breast cancer scRNA-seq reference has yet been selected, and no stage-03 script has been created.
 
 ## 13. Handoff rules
 

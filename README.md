@@ -77,6 +77,7 @@ BayesPrism-TCGA-BRCA/
 ├── docs/
 │   ├── analytical_decisions.md
 │   ├── environment.md
+│   ├── scrna_reference_selection.md
 │   └── workflow.md
 ├── metadata/
 │   ├── data_sources.tsv
@@ -93,6 +94,7 @@ Additional numbered scripts will be created only when their inputs, parameters, 
 - [PROJECT_STATUS.md](PROJECT_STATUS.md) — current project handoff state and concise execution summary.
 - [docs/workflow.md](docs/workflow.md) — workflow stages, inputs, outputs, and data-location conventions.
 - [docs/analytical_decisions.md](docs/analytical_decisions.md) — confirmed, provisional, and pending analytical decisions.
+- [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) — approved criteria for evaluating breast cancer scRNA-seq reference candidates; no dataset selected yet.
 - [docs/environment.md](docs/environment.md) — current computational environment and local/HPC considerations.
 - [metadata/data_sources.tsv](metadata/data_sources.tsv) — dataset provenance and unresolved source details.
 - [metadata/run_registry.tsv](metadata/run_registry.tsv) — compact registry of actual execution attempts, statuses, input runs, and Git commits.

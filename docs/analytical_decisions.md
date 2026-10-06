@@ -88,6 +88,8 @@ Define and document the rule for selecting or handling one sample per patient be
 
 No breast cancer scRNA-seq reference dataset has yet been selected or confirmed.
 
+Reference-selection criteria have been approved and recorded in [scrna_reference_selection.md](scrna_reference_selection.md). Candidate evaluation and final reference selection remain pending.
+
 **Provisional decision**
 
 None recorded.
