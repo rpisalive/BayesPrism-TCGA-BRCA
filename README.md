@@ -1,193 +1,106 @@
 # BayesPrism-TCGA-BRCA
 
-Reproducible workflows, scripts, and findings for BayesPrism-based deconvolution of TCGA-BRCA bulk RNA-seq using breast cancer single-cell RNA-seq references, followed by downstream tumor and tumor microenvironment analyses.
+Reproducible workflows and documentation for preparing TCGA-BRCA bulk RNA-seq for BayesPrism deconvolution with a breast cancer single-cell RNA-seq reference, followed by deconvolution quality assessment and downstream biological and statistical analyses.
 
 ## Project overview
 
-Bulk RNA-seq measurements from tumor samples represent mixtures of malignant cells and multiple non-malignant cell populations within the tumor microenvironment. Computational deconvolution can be used to estimate the cellular composition of these samples and recover cell-type-specific transcriptional information.
+Bulk tumor RNA-seq measures a mixture of malignant and non-malignant cell populations. This project will use BayesPrism to estimate the cellular composition of TCGA-BRCA bulk tumors using a breast cancer single-cell RNA-seq reference.
 
-This project uses **BayesPrism** to deconvolve bulk RNA-seq data from **The Cancer Genome Atlas Breast Invasive Carcinoma cohort (TCGA-BRCA)** using a breast cancer **single-cell RNA-seq reference dataset**.
-
-The repository documents the complete analysis workflow, including data preprocessing, reference construction, BayesPrism deconvolution, quality assessment, downstream analyses, and interpretation of results.
+The project currently has a successfully executed TCGA-BRCA acquisition stage and a successfully executed bulk QC and structural-validation stage. The single-cell reference has not yet been selected, BayesPrism has not yet been installed or version-pinned, and no deconvolution or downstream analysis has been performed.
 
 ## Objectives
 
-The main objectives of this project are to:
+1. Prepare and quality-control TCGA-BRCA bulk RNA-seq for deconvolution.
+2. Select and construct an appropriate breast cancer scRNA-seq reference.
+3. Perform BayesPrism deconvolution of TCGA-BRCA tumors.
+4. Evaluate deconvolution quality and biological plausibility.
+5. Investigate tumor and tumor-microenvironment features using the inferred cellular and transcriptional profiles.
+6. Develop reproducible downstream analyses suitable for publication.
 
-1. Prepare and quality-control TCGA-BRCA bulk RNA-seq data for deconvolution.
-2. Construct an appropriate breast cancer single-cell RNA-seq reference for BayesPrism.
-3. Estimate cell-type proportions in TCGA-BRCA tumor samples using BayesPrism.
-4. Evaluate the robustness and biological plausibility of the deconvolution results.
-5. Investigate tumor and tumor-microenvironment characteristics derived from the deconvolution.
-6. Perform downstream analyses to identify biologically and clinically relevant patterns associated with breast cancer heterogeneity.
+## Current workflow status
 
-Additional analyses will be incorporated as the project develops.
+| Stage | Status |
+| --- | --- |
+| 01. TCGA-BRCA acquisition | Implemented and successfully executed |
+| 02. TCGA bulk QC and structural validation | Implemented and successfully executed |
+| 03. Breast cancer scRNA-seq reference acquisition | Planned |
+| 04. scRNA-seq reference preprocessing | Planned |
+| 05. Gene identifier harmonization | Planned |
+| 06. BayesPrism input preparation | Planned |
+| 07. BayesPrism deconvolution | Planned |
+| 08. Deconvolution QC and validation | Planned |
+| 09. Downstream analyses | Planned |
+| 10. Figures and summary tables | Planned |
 
-## Analysis workflow
+The current TCGA-BRCA cohort is provisionally restricted to patients represented in an external `TCGA-sTIL_scoring.csv` file. This cohort rule remains subject to collaborator confirmation and should not be treated as the final study-cohort definition.
 
-The planned workflow is:
+## Implemented scripts
 
-```text
-Breast cancer scRNA-seq reference
-            |
-            v
-   Reference preprocessing
-            |
-            v
-Cell-type annotation / filtering
-            |
-            |
-            +-----------------------------+
-                                          |
-TCGA-BRCA bulk RNA-seq                    |
-            |                             |
-            v                             |
-    Bulk data preprocessing               |
-            |                             |
-            +-------------+---------------+
-                          |
-                          v
-                    BayesPrism
-                          |
-              +-----------+-----------+
-              |                       |
-              v                       v
-      Cell-type fractions      Cell-type-specific
-                               expression estimates
-              |                       |
-              +-----------+-----------+
-                          |
-                          v
-                 Quality assessment
-                          |
-                          v
-                 Downstream analyses
-                          |
-                          v
-              Biological interpretation
-```
+### `scripts/01_acquire_tcga_bulk.R`
 
-## Data sources
+This script acquires the provisional sTIL-matched TCGA-BRCA Primary Tumor cohort from the NCI Genomic Data Commons using open-access STAR - Counts RNA-seq data. It retains the `unstranded` assay as raw counts and does not normalize, transform, or filter expression values during acquisition.
 
-### TCGA-BRCA bulk RNA-seq
+### `scripts/02_preprocess_tcga_bulk.R`
 
-Bulk transcriptomic data will be obtained from the **TCGA Breast Invasive Carcinoma (TCGA-BRCA)** cohort.
+This script performs deterministic QC and structural validation for one explicitly selected acquisition run. It validates the acquisition object, the `unstranded` assay, metadata alignment, identifiers, and raw counts; calculates sample and gene QC; and records aggregate provenance and validation results.
 
-Associated clinical and molecular metadata may also be incorporated where appropriate for downstream analyses.
+It does not normalize, log-transform, filter, transpose, convert identifiers, collapse duplicate gene symbols, select one sample per patient, run BayesPrism, or write another expression matrix or `SummarizedExperiment`.
 
-### Single-cell RNA-seq reference
+Its first production run completed successfully for the current acquisition cohort, validating 60,660 genes, 869 Primary Tumor samples, and 853 patients. Detailed QC outputs remain external to Git.
 
-A breast cancer single-cell RNA-seq dataset will be used as the reference for BayesPrism deconvolution.
+## Data management and reproducibility
 
-Reference preprocessing will include, where appropriate:
+Large biological data remain outside Git:
 
-* quality control;
-* gene filtering;
-* cell-type annotation review;
-* removal or consolidation of unsuitable cell populations;
-* harmonization of gene identifiers between the single-cell and bulk datasets;
-* preparation of the expression matrix and cell-type labels required by BayesPrism.
+- Raw, processed, intermediate, and final biological data are stored under configured external data roots.
+- Patient-level TCGA data, expression matrices, and identifier-bearing QC outputs are not committed.
+- Raw inputs are immutable.
+- Machine-specific paths belong in ignored `config/local/paths.yml`.
+- Local environment workarounds belong in ignored machine-specific configuration.
+- Sample, cell, or gene exclusions must be documented and must not occur silently.
 
-Details of the selected reference dataset and preprocessing decisions will be documented as the project progresses.
+The repository contains scripts, safe configuration examples, documentation, small non-sensitive metadata, execution records, and reproducibility infrastructure. The committed `renv.lock` records the project R dependency environment.
 
-## Repository structure
-
-The repository is intended to contain analysis code, documentation, selected summary results, and figures.
-
-A provisional structure is:
+## Repository layout
 
 ```text
 BayesPrism-TCGA-BRCA/
-|
 ├── README.md
-├── scripts/
-│   ├── 01_data_preparation/
-│   ├── 02_reference_preprocessing/
-│   ├── 03_bulk_preprocessing/
-│   ├── 04_bayesprism/
-│   ├── 05_deconvolution_qc/
-│   └── 06_downstream_analysis/
-|
+├── PROJECT_STATUS.md
+├── AGENTS.md
+├── .gitignore
+├── .Rprofile
+├── renv.lock
+├── renv/
 ├── config/
-|
+│   └── paths.example.yml
+├── docs/
+│   ├── analytical_decisions.md
+│   ├── environment.md
+│   └── workflow.md
 ├── metadata/
-|
-├── results/
-│   ├── qc/
-│   ├── deconvolution/
-│   ├── downstream/
-│   └── tables/
-|
-├── figures/
-|
-└── docs/
+│   ├── data_sources.tsv
+│   └── run_registry.tsv
+└── scripts/
+    ├── 01_acquire_tcga_bulk.R
+    └── 02_preprocess_tcga_bulk.R
 ```
 
-The directory structure may be modified as the analysis develops.
+Additional numbered scripts will be created only when their inputs, parameters, and outputs have been agreed.
 
-## Reproducibility
+## Documentation and provenance
 
-The analysis will be developed as a reproducible computational workflow.
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) — current project handoff state and concise execution summary.
+- [docs/workflow.md](docs/workflow.md) — workflow stages, inputs, outputs, and data-location conventions.
+- [docs/analytical_decisions.md](docs/analytical_decisions.md) — confirmed, provisional, and pending analytical decisions.
+- [docs/environment.md](docs/environment.md) — current computational environment and local/HPC considerations.
+- [metadata/data_sources.tsv](metadata/data_sources.tsv) — dataset provenance and unresolved source details.
+- [metadata/run_registry.tsv](metadata/run_registry.tsv) — compact registry of actual execution attempts, statuses, input runs, and Git commits.
 
-Where possible, the repository will document:
+Detailed execution artifacts, including logs, provenance, and identifier-bearing QC tables, remain external to Git.
 
-* software and package versions;
-* preprocessing parameters;
-* filtering criteria;
-* BayesPrism parameters;
-* random seeds where relevant;
-* input and output file relationships;
-* major analytical decisions.
+## BayesPrism status
 
-Environment information and package dependencies will be added once the computational environment has been finalized.
+BayesPrism has not yet been installed, configured, or version-pinned for this project. Its installation source, version, input requirements, reference composition, filtering decisions, and model parameters will be documented before the first deconvolution run.
 
-## Data management
-
-Large expression matrices and controlled-access or patient-level datasets will **not** be stored directly in this repository.
-
-The repository will primarily contain:
-
-* analysis scripts;
-* configuration files;
-* documentation;
-* non-sensitive metadata where appropriate;
-* summary tables;
-* figures;
-* derived results suitable for version control.
-
-Local or HPC paths to large datasets will be excluded from version control where necessary.
-
-## BayesPrism
-
-BayesPrism is a Bayesian framework for decomposing bulk transcriptomic profiles using single-cell reference data.
-
-In this project, BayesPrism will be used to infer the cellular composition of TCGA-BRCA bulk tumors and, where appropriate, obtain cell-type-specific transcriptional estimates for subsequent analyses.
-
-BayesPrism repository:
-
-https://github.com/Danko-Lab/BayesPrism
-
-## Project status
-
-**Current status:** Project setup and analysis planning.
-
-Planned initial stages:
-
-* [ ] Obtain and organize TCGA-BRCA bulk RNA-seq data
-* [ ] Obtain and inspect the breast cancer scRNA-seq reference
-* [ ] Define cell-type annotation strategy
-* [ ] Harmonize gene identifiers across datasets
-* [ ] Perform reference quality control
-* [ ] Perform bulk RNA-seq preprocessing
-* [ ] Prepare BayesPrism input objects
-* [ ] Run initial BayesPrism deconvolution
-* [ ] Evaluate deconvolution quality
-* [ ] Develop downstream analysis workflow
-
-This section will be updated as the project progresses.
-
-## Documentation of findings
-
-In addition to analysis scripts, this repository will be used to document important analytical observations, parameter choices, limitations, and biological findings.
-
-Major decisions and results will be recorded so that the development of the analysis can be reviewed and discussed with collaborators and supervisors.
+Official BayesPrism repository: <https://github.com/Danko-Lab/BayesPrism>
