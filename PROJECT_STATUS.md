@@ -12,7 +12,7 @@ Repository and reproducibility infrastructure are established. Stage 01 TCGA-BRC
 
 `scripts/02_preprocess_tcga_bulk.R` has been reviewed, committed, pushed, and executed successfully. Production QC run `20261006T151501_23332` used acquisition run `20260915T222828_15620` and execution commit `ff27402350973c49a4e735c8a3f18a23082e68e3`. The committed run registry records this execution.
 
-Stages 03–10 remain unimplemented. The breast cancer scRNA-seq reference remains unselected. BayesPrism remains uninstalled and unpinned for this project, and no deconvolution or downstream analysis has been performed.
+Stages 03–10 remain unimplemented. The breast cancer scRNA-seq reference remains unselected. The approved pre-search reference-selection framework in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) was frozen and pushed at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`; no candidate-reference search has begun under it. BayesPrism remains uninstalled and unpinned for this project, and no single-cell preprocessing, deconvolution, or downstream analysis has been performed.
 
 The repository overview and workflow documentation are synchronized with the completed stage-02 state. This handoff summarizes current implementation and execution evidence without replacing the authoritative records listed below.
 
@@ -22,8 +22,8 @@ The repository overview and workflow documentation are synchronized with the com
 | --- | --- |
 | Repository | BayesPrism-TCGA-BRCA |
 | Current branch | `main` |
-| HEAD | `cf0bd9dd7dc2775f8e22aef350825ab1f3cbc9ee` |
-| HEAD message | Update README for completed TCGA QC stages |
+| Reference-selection freeze commit | 1d158dae3479fddb80e9d024a3cb57ef24845b1b |
+| Freeze commit message | Freeze scRNA reference selection criteria |
 | Local `main` versus `origin/main` | Synchronized; 0 ahead, 0 behind |
 | Working tree | Clean |
 
@@ -260,7 +260,7 @@ No samples were selected, removed, or aggregated. Handling remains unresolved fo
 
 ### scRNA-seq reference — pending
 
-The reference dataset remains unselected. Approved reference-selection criteria are recorded in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md). Candidate assessment, Stage-04 QC and annotation, donor coverage, and filtering decisions remain pending.
+The reference dataset remains unselected. The pre-search criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) are approved and frozen at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`. No candidate-reference search or assessment has begun under the framework. Candidate-specific evaluation, Stage-04 QC and annotation, donor coverage, and filtering decisions remain pending.
 
 ### Gene harmonization — pending
 
@@ -305,7 +305,7 @@ HPC software versions, system libraries, scheduler settings, and resource requir
 | [metadata/data_sources.tsv](metadata/data_sources.tsv) | Dataset provenance, releases, retrieval dates, intended uses, and unresolved source details |
 | [metadata/run_registry.tsv](metadata/run_registry.tsv) | Compact registry of actual execution attempts, input runs, statuses, and execution Git commits |
 | [docs/analytical_decisions.md](docs/analytical_decisions.md) | Confirmed, provisional, and pending analytical decisions and acquisition counts |
-| [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) | Approved reference-selection criteria and future candidate assessment framework |
+| [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) | Approved and frozen pre-search criteria; future candidate assessments remain pending |
 | [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions |
 | [docs/environment.md](docs/environment.md) | Computational environment and local versus HPC considerations |
 | [renv.lock](renv.lock) | Machine-readable dependency versions and sources |
@@ -324,9 +324,9 @@ External provenance, logs, manifests, and QC reports provide detailed execution 
 
 ## 12. Immediate next action
 
-Use the approved criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) to assess candidate breast cancer scRNA-seq references before selecting a dataset or creating stage-03 implementation code.
+Systematically discover candidate references and screen their eligibility using the frozen criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md). Discovery should include scRNA-seq primary-reference candidates and relevant snRNA-seq sensitivity candidates, assessed separately.
 
-No breast cancer scRNA-seq reference has yet been selected, and no stage-03 script has been created.
+No breast cancer scRNA-seq reference has yet been selected. Do not create a Stage-03 acquisition script until a reference has been selected.
 
 ## 13. Handoff rules
 
