@@ -1,7 +1,7 @@
 # Workflow
 
-**Workflow record date:** 2026-09-19  
-**Scope:** This document describes the implemented TCGA-BRCA acquisition stage and the planned analysis sequence for BayesPrism deconvolution. Analytical choices and unresolved decisions are recorded in [`docs/analytical_decisions.md`](analytical_decisions.md).
+**Workflow record date:** 2026-10-06  
+**Scope:** This document describes the implemented TCGA-BRCA acquisition and bulk QC stages and the planned analysis sequence for BayesPrism deconvolution. Analytical choices and unresolved decisions are recorded in [`docs/analytical_decisions.md`](analytical_decisions.md).
 
 ## Data-location convention
 
@@ -28,7 +28,7 @@ External sTIL scoring CSV ─┐
 GDC TCGA-BRCA data ────────┘
                                      |
                                      v
-                         TCGA bulk preprocessing [planned]
+             02 TCGA bulk QC and structural validation [implemented]
                                      |
 Breast cancer scRNA-seq reference ──┼─> Reference acquisition and preprocessing [planned]
                                      |
@@ -48,7 +48,7 @@ Breast cancer scRNA-seq reference ──┼─> Reference acquisition and prepro
              Downstream analyses, figures, and summary tables [planned]
 ```
 
-Only the acquisition script exists currently. Future scripts will be added as numbered scripts when their inputs, parameters, and outputs have been agreed and implemented.
+Scripts 01 and 02 are implemented. Later numbered scripts will be added only when their inputs, parameters, and outputs have been agreed and implemented.
 
 ## 01. TCGA-BRCA acquisition — implemented
 
@@ -90,11 +90,59 @@ A TCGA-BRCA acquisition run completed successfully on 2026-09-15. It produced th
 
 The sTIL-based cohort restriction remains provisional pending collaborator confirmation.
 
-## Planned stages — not yet implemented
+## 02. TCGA bulk QC and structural validation — implemented
+
+**Script:** `scripts/02_preprocess_tcga_bulk.R`
+
+This stage performs deterministic QC and structural validation of one acquisition run selected explicitly through `tcga_acquisition_run_id`. Machine-specific paths remain in ignored `config/local/paths.yml`.
+
+### Production execution
+
+- QC run ID: `20261006T151501_23332`
+- Input acquisition run: `20260915T222828_15620`
+- Execution Git commit: `ff27402350973c49a4e735c8a3f18a23082e68e3`
+- `qc_status`: `succeeded`
+
+### Inputs
+
+- The acquisition `RangedSummarizedExperiment` selected through `tcga_acquisition_run_id`.
+- Only its `unstranded` assay, retained in gene-by-sample orientation.
+- External locations defined by ignored local configuration.
+
+### Process
+
+The script validates object and assay structure, rowData/colData alignment, and raw counts. It calculates sample and gene QC, diagnoses multiple samples per patient, records input and script checksums, records R/package/Git provenance, and writes aggregate-only logs.
+
+It does not normalize or log-transform counts; filter genes or samples; transpose counts; strip Ensembl suffixes; convert identifiers; collapse duplicate gene symbols; select one sample per patient; run BayesPrism; or write another expression matrix or `SummarizedExperiment`.
+
+### Outputs
+
+Run-specific outputs remain outside Git under:
+
+```text
+intermediate/tcga_brca/<acquisition_run_id>/02_preprocess/<qc_run_id>/
+```
+
+- `sample_qc.tsv`
+- `gene_qc.tsv`
+- `multiple_samples_per_patient.tsv`
+- `qc_summary.yml`
+- `session_info.txt`
+- `preprocess_tcga_bulk.log`
+
+Identifier-bearing QC tables remain outside Git.
+
+### Current production status
+
+The successful production run validated 60,660 genes, 869 Primary Tumor samples, and 853 patients. It found 0 zero-total samples, 0 missing sample IDs, 0 duplicated sample-ID rows, and 0 missing patient IDs. Eleven patients had multiple samples. Gene diagnostics found 2,671 all-zero genes, 0 missing or duplicated `gene_id` rows, 1,343 rows participating in duplicated `gene_name` values across 110 distinct values, and 60,616 gene IDs with terminal numeric version suffixes. No genes or samples were removed.
+
+For current handoff state, see [`PROJECT_STATUS.md`](../PROJECT_STATUS.md). For executed-run records, see [`metadata/run_registry.tsv`](../metadata/run_registry.tsv). For analytical decisions, see [`docs/analytical_decisions.md`](analytical_decisions.md).
+
+## Planned stages
 
 | Planned order | Stage | Current status |
 | ------------- | ----- | -------------- |
-| 02 | TCGA bulk preprocessing | Planned; no script or preprocessing decisions finalized. |
+| 02 | TCGA bulk QC and structural validation | Implemented and successfully executed. |
 | 03 | Breast cancer scRNA-seq reference acquisition | Planned; reference dataset not yet selected. |
 | 04 | scRNA-seq reference preprocessing | Planned; QC, annotation, and filtering decisions remain pending. |
 | 05 | Gene identifier harmonization | Planned; identifier conventions and duplicate handling remain pending. |
