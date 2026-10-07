@@ -1,6 +1,8 @@
 # Analytical decisions
 
 **Decision record date:** 2026-09-19  
+**Candidate-screening update recorded:** 2026-10-08
+
 **Purpose:** Record confirmed, provisional, and pending analytical decisions for the BayesPrism TCGA-BRCA workflow. This document records the current state of the project and will be updated as decisions are confirmed.
 
 ## TCGA-BRCA bulk RNA-seq acquisition
@@ -33,6 +35,8 @@ Any preprocessing required for BayesPrism input preparation will be recorded sep
 **Confirmed decision**
 
 The current acquisition script intersects TCGA patient IDs from the discovery query with IDs in `TCGA-sTIL_scoring.csv`. The resulting sTIL-matched patient set defines the currently downloaded TCGA-BRCA cohort.
+
+The scoring CSV also supplies the patient-level sTIL scores for the principal planned downstream question: how BayesPrism-inferred immune-cell populations in TCGA-BRCA tumours relate to those scores. This scientific role does not resolve whether sTIL matching should define the final study cohort.
 
 **Provisional decision**
 
@@ -88,18 +92,20 @@ Define and document the rule for selecting or handling one sample per patient be
 
 No breast cancer scRNA-seq reference dataset has yet been selected or confirmed.
 
-Reference-selection criteria have been approved and recorded in [scrna_reference_selection.md](scrna_reference_selection.md). Candidate evaluation and final reference selection remain pending.
+The pre-search eligibility framework in [scrna_reference_selection.md](scrna_reference_selection.md) is frozen at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b` and remains unchanged. Discovery, deduplication, eligibility screening, and source-level confirmation are substantially complete; 13 study-level candidates currently pass screening for specified eligible subsets. Their status and limitations are recorded in [scrna_reference_candidate_audit.md](scrna_reference_candidate_audit.md). Eligibility is not reference selection.
+
+The immune-cell versus sTIL endpoint was clarified after screening substantially progressed, but before reference selection, Stage 03, or examination of production BayesPrism results. One well-characterized primary scRNA-seq reference remains the default design, with limited sensitivity references if useful. A pooled multi-study reference is not the default. The endpoint clarification changes the emphasis of qualitative comparison, not the frozen eligibility rules.
 
 **Provisional decision**
 
-None recorded.
+An earlier general whole-tumour comparison tentatively favoured Pal / `GSE161529` as possible primary, Wu / `GSE176078` as possible sensitivity reference, and Bassez baseline as a possible second sensitivity reference. This preference is reopened for the immune/sTIL endpoint; none has been selected.
 
 **Pending decision**
 
-- Select and document the reference dataset and its provenance.
-- Define the cell-type annotation strategy.
-- Assess malignant-cell representation.
-- Define reference quality-control and filtering decisions.
+- Re-evaluate serious eligible candidates in their exact eligible subsets for immune depth, independent donor support for T, B/plasma, NK, and myeloid populations, rare immune populations across donors, annotation and marker reliability, and BayesPrism cell-type/state suitability.
+- Assess treatment, sorting, biopsy, dissociation, chemistry, and ex-vivo effects while retaining adequate malignant, fibroblast/stromal, and endothelial coverage.
+- Select and document one primary reference and any justified sensitivity reference(s), including provenance and exact sample subsets.
+- Define Stage-04 reference QC, malignant-cell audit, annotation, filtering, cell-type/state taxonomy, and any donor-balancing decisions before implementation.
 
 ## BayesPrism
 

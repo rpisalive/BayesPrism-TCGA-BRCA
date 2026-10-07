@@ -1,6 +1,6 @@
 # Project Status
 
-**Handoff record date:** 2026-10-06
+**Handoff record date:** 2026-10-08
 
 ## 1. Project objective
 
@@ -12,7 +12,9 @@ Repository and reproducibility infrastructure are established. Stage 01 TCGA-BRC
 
 `scripts/02_preprocess_tcga_bulk.R` has been reviewed, committed, pushed, and executed successfully. Production QC run `20261006T151501_23332` used acquisition run `20260915T222828_15620` and execution commit `ff27402350973c49a4e735c8a3f18a23082e68e3`. The committed run registry records this execution.
 
-Stages 03–10 remain unimplemented. The breast cancer scRNA-seq reference remains unselected. The approved pre-search reference-selection framework in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) was frozen and pushed at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`; no candidate-reference search has begun under it. BayesPrism remains uninstalled and unpinned for this project, and no single-cell preprocessing, deconvolution, or downstream analysis has been performed.
+Stages 03–10 remain unimplemented. The approved pre-search reference-selection framework in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) remains frozen at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`. Candidate discovery, deduplication, eligibility screening, and source-level confirmation are substantially complete; 13 study-level candidates currently pass screening for specified eligible subsets. The breast cancer scRNA-seq reference remains unselected.
+
+After screening had substantially progressed, the principal downstream question was clarified as the relationship between BayesPrism-inferred immune-cell populations and patient-level sTIL scores. An earlier Pal/Wu/Bassez general whole-tumour preference was provisional and is reopened for this endpoint; the frozen eligibility rules are unchanged. Stage 03 is blocked pending immune-focused reference selection. No Stage-03 code has been created, and the project has not performed single-cell preprocessing. BayesPrism remains uninstalled and unpinned, and no production deconvolution or downstream analysis has been performed.
 
 The repository overview and workflow documentation are synchronized with the completed stage-02 state. This handoff summarizes current implementation and execution evidence without replacing the authoritative records listed below.
 
@@ -25,7 +27,7 @@ The repository overview and workflow documentation are synchronized with the com
 | Reference-selection freeze commit | 1d158dae3479fddb80e9d024a3cb57ef24845b1b |
 | Freeze commit message | Freeze scRNA reference selection criteria |
 | Local `main` versus `origin/main` | Synchronized; 0 ahead, 0 behind |
-| Working tree | Clean |
+| Working tree | Clean at the start of this documentation update |
 
 Synchronization was verified against the locally recorded `origin/main` reference. No fresh fetch was performed during this handoff review.
 
@@ -187,7 +189,7 @@ The prior version-specific requirements review remains discussion-confirmed rath
 | --- | --- | --- |
 | 01 | TCGA-BRCA acquisition | Implemented and successfully executed |
 | 02 | TCGA bulk QC and structural validation | Implemented and successfully executed |
-| 03 | Breast cancer scRNA-seq reference acquisition | Planned; reference not selected |
+| 03 | Breast cancer scRNA-seq reference acquisition | Planned; blocked pending immune-focused reference selection |
 | 04 | scRNA-seq reference preprocessing | Planned; QC, annotation, and filtering pending |
 | 05 | Gene identifier harmonization | Planned; identifier and duplicate handling pending |
 | 06 | BayesPrism input preparation | Planned; implementation and final cleanup choices pending |
@@ -260,7 +262,7 @@ No samples were selected, removed, or aggregated. Handling remains unresolved fo
 
 ### scRNA-seq reference — pending
 
-The reference dataset remains unselected. The pre-search criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) are approved and frozen at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`. No candidate-reference search or assessment has begun under the framework. Candidate-specific evaluation, Stage-04 QC and annotation, donor coverage, and filtering decisions remain pending.
+The reference dataset remains unselected. The pre-search criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) are frozen at commit `1d158dae3479fddb80e9d024a3cb57ef24845b1b`. [docs/scrna_reference_candidate_audit.md](docs/scrna_reference_candidate_audit.md) records the substantially completed screening, 13 eligible study-level candidates, deduplication rules, and remaining source/subset uncertainties. The earlier Pal/Wu/Bassez preference was provisional; immune-focused comparison is now required before selecting a primary reference. Exact sample subset, sensitivity references, Stage-04 QC and annotation, cell-type/state taxonomy, donor balancing, and filtering remain pending.
 
 ### Gene harmonization — pending
 
@@ -305,7 +307,8 @@ HPC software versions, system libraries, scheduler settings, and resource requir
 | [metadata/data_sources.tsv](metadata/data_sources.tsv) | Dataset provenance, releases, retrieval dates, intended uses, and unresolved source details |
 | [metadata/run_registry.tsv](metadata/run_registry.tsv) | Compact registry of actual execution attempts, input runs, statuses, and execution Git commits |
 | [docs/analytical_decisions.md](docs/analytical_decisions.md) | Confirmed, provisional, and pending analytical decisions and acquisition counts |
-| [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) | Approved and frozen pre-search criteria; future candidate assessments remain pending |
+| [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md) | Approved and frozen pre-search eligibility and comparison framework |
+| [docs/scrna_reference_candidate_audit.md](docs/scrna_reference_candidate_audit.md) | Study-level screening, deduplication, limitations, and reopened immune-focused comparison |
 | [docs/workflow.md](docs/workflow.md) | Workflow ordering, inputs/outputs, and data-location conventions |
 | [docs/environment.md](docs/environment.md) | Computational environment and local versus HPC considerations |
 | [renv.lock](renv.lock) | Machine-readable dependency versions and sources |
@@ -324,13 +327,13 @@ External provenance, logs, manifests, and QC reports provide detailed execution 
 
 ## 12. Immediate next action
 
-Systematically discover candidate references and screen their eligibility using the frozen criteria in [docs/scrna_reference_selection.md](docs/scrna_reference_selection.md). Discovery should include scRNA-seq primary-reference candidates and relevant snRNA-seq sensitivity candidates, assessed separately.
+Re-evaluate the serious eligible scRNA-seq candidates specifically for the immune/sTIL-focused endpoint and select one primary reference before implementation.
 
 No breast cancer scRNA-seq reference has yet been selected. Do not create a Stage-03 acquisition script until a reference has been selected.
 
 ## 13. Handoff rules
 
-- Read `PROJECT_STATUS.md` first, then consult the authoritative detailed records.
+- For the next conversation, read `PROJECT_STATUS.md`, `docs/scrna_reference_selection.md`, `docs/scrna_reference_candidate_audit.md`, then `docs/analytical_decisions.md`, in that order.
 - Preserve the distinction between repository-backed facts, external execution evidence, discussion-confirmed observations, provisional decisions, and planned work.
 - Do not commit patient-level data or large expression matrices.
 - Do not modify raw data.
@@ -342,4 +345,4 @@ No breast cancer scRNA-seq reference has yet been selected. Do not create a Stag
 
 ---
 
-Verification note: Repository branch, HEAD, message, clean working tree, and synchronization with the local remote-tracking reference were verified during the handoff review. Finalized stage-02 external outputs independently support the production QC findings, aggregate summaries, provenance, and output finalization. The stage-01 execution Git commit remains `UNVERIFIED`, and the earlier acquisition-specific claim of zero requested patients missing was not independently rechecked. The BayesPrism requirements review remains discussion-confirmed rather than a committed requirements-review artifact. Production exit code 0 and detailed startup diagnostics were observed during the earlier execution review, not stored as dedicated fields in the finalized QC summary. BayesPrism’s uninstalled/unpinned state reflects documented project state; no fresh installation scan was performed. No fresh fetch, new analysis execution, or acquisition-input reload was performed during the handoff review. Only `PROJECT_STATUS.md` was modified when applying this revision.
+Verification note: Local `main` and the recorded `origin/main` reference were synchronized and the working tree was clean before this documentation update; no fresh fetch was performed. Candidate screening and the endpoint clarification are discussion-confirmed findings supplied for this handoff, not independently rechecked against every accession during this update. Finalized Stage-02 external outputs supported the recorded QC in the earlier execution review; the observed exit code and startup diagnostics were not dedicated fields in its finalized summary. The Stage-01 execution Git commit remains `UNVERIFIED`, and the earlier claim of zero requested patients missing was not rechecked. The BayesPrism requirements review remains discussion-confirmed rather than a dedicated committed review, and its documented uninstalled/unpinned state was not freshly scanned. No acquisition, preprocessing, deconvolution, or other biological analysis was run for this documentation update.
